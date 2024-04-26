@@ -67,4 +67,25 @@ public class ProductServiceImplement implements ProductService {
             return false;
         }
     }
+
+    @Override
+    public boolean buyProduct(long id) {
+        if (productRepository.existsById(id)) {
+            try {
+                Product product = modelMapper.map(getProductById(id), Product.class);
+                long productQuantity = product.getQuantity();
+                product.setQuantity(productQuantity - 1);
+                if(product.getQuantity() > 1) {
+                    productRepository.save(product);
+                } else {
+                    productRepository.delete(product);
+                }
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
 }

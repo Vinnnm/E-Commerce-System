@@ -52,4 +52,13 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete product.");
         }
     }
+
+    @PostMapping ("/buy")
+    public ResponseEntity<?> buyProduct(@RequestParam ("id") long id) {
+        if (productService.buyProduct(id)) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("Product bought successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to buy product.");
+        }
+    }
 }
