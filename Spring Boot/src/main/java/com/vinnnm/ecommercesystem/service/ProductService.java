@@ -10,5 +10,5 @@ public interface ProductService {
     List<ProductDTO> getAllProducts();
     ProductDTO getProductById(long id);
     boolean delete(long id);
-    boolean buyProduct(long id);
+    boolean buyProduct(long id, long quantity);
 }

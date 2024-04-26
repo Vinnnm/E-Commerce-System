@@ -54,8 +54,8 @@ public class ProductController {
     }
 
     @PostMapping ("/buy")
-    public ResponseEntity<?> buyProduct(@RequestParam ("id") long id) {
-        if (productService.buyProduct(id)) {
+    public ResponseEntity<?> buyProduct(@RequestParam ("id") long id, @RequestParam ("quantity") long quantity) {
+        if (productService.buyProduct(id, quantity)) {
             return ResponseEntity.status(HttpStatus.CREATED).body("Product bought successfully.");
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to buy product.");
