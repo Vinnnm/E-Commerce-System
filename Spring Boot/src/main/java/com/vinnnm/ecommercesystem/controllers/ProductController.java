@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @AllArgsConstructor
 @RestController
@@ -30,7 +31,7 @@ public class ProductController {
 
     @GetMapping("/getAllProduct")
     public ResponseEntity<?> getAllProduct() {
-        List<ProductDTO> productDTOS = productService.getAllProducts();
+        Set<ProductDTO> productDTOS = productService.getAllProducts();
         if (productDTOS != null && !productDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK).body(productDTOS);
         } else {
@@ -38,13 +39,13 @@ public class ProductController {
         }
     }
 
-    @PostMapping ("/findProduct")
+    @GetMapping ("/findProduct")
     public ResponseEntity<?> findProduct(@RequestParam ("id") long id) {
         ProductDTO productDTO = productService.getProductById(id);
         return ResponseEntity.status(HttpStatus.OK).body(Objects.requireNonNullElse(productDTO, "No products found."));
     }
 
-    @PostMapping ("/delete")
+    @DeleteMapping ("/delete")
     public ResponseEntity<?> deleteProduct(@RequestParam ("id") long id) {
         if (productService.delete(id)) {
             return ResponseEntity.status(HttpStatus.CREATED).body("Product deleted successfully.");
@@ -60,5 +61,11 @@ public class ProductController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to buy product.");
         }
+    }
+
+    @GetMapping ("/findByBrand")
+    public ResponseEntity<?> findByBrand(@RequestParam ("brandId") long brandId) {
+        List<ProductDTO> productDTOs = productService.getProductsByBrand(brandId);
+        return ResponseEntity.status(HttpStatus.OK).body(Objects.requireNonNullElse(productDTOs, "No products found."));
     }
 }

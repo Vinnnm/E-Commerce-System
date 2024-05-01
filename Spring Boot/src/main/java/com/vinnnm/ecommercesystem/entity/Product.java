@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "product")
@@ -27,4 +28,11 @@ public class Product {
 
     @Column(name = "created_at")
     private long createdAt;
+
+    @ManyToMany(mappedBy = "products")
+    private Set<Category> categories;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 }
