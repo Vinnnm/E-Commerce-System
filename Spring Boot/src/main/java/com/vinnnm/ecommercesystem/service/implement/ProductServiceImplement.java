@@ -1,7 +1,6 @@
 package com.vinnnm.ecommercesystem.service.implement;
 
 import com.vinnnm.ecommercesystem.daos.ProductRepository;
-import com.vinnnm.ecommercesystem.dtos.CategoryDTO;
 import com.vinnnm.ecommercesystem.dtos.ProductDTO;
 import com.vinnnm.ecommercesystem.entity.Brand;
 import com.vinnnm.ecommercesystem.entity.Category;
@@ -58,14 +57,12 @@ public class ProductServiceImplement implements ProductService {
                 ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
                 productDTO.setCreatedAtDate(Helper.convertTimestampToDate(product.getCreatedAt()));
                 Set<Category> categories = new HashSet<>(categoryService.getCategoriesByProduct(product));
-                List<CategoryDTO> categoryDTOs = new ArrayList<>();
-                for (Category category : categories) {
-                    CategoryDTO categoryDTO = modelMapper.map(category, CategoryDTO.class);
-                    categoryDTO.setCreatedAtDate(Helper.convertTimestampToDate(category.getCreatedAt()));
-                    categoryDTO.setProducts(null);
-                    categoryDTOs.add(categoryDTO);
-                }
-                productDTO.setCategories(categoryDTOs);
+                List<String> categoryNames = categories.stream()
+                        .map(Category::getName)
+                        .toList();
+                productDTO.setCategoryNamesArray(categoryNames.toArray(new String[0]));
+                productDTO.setBrand(null);
+                productDTO.setCategories(null);
                 productDTOS.add(productDTO);
             }
         }
@@ -79,18 +76,14 @@ public class ProductServiceImplement implements ProductService {
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
             ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
-            Set<Category> categories = new HashSet<>(categoryService.getCategoriesByProduct(product));
-            List<CategoryDTO> categoryDTOs = new ArrayList<>();
-
-            for (Category category : categories) {
-                CategoryDTO categoryDTO = modelMapper.map(category, CategoryDTO.class);
-                categoryDTO.setCreatedAtDate(Helper.convertTimestampToDate(category.getCreatedAt()));
-                categoryDTO.setProducts(null);
-                categoryDTOs.add(categoryDTO);
-            }
             productDTO.setCreatedAtDate(Helper.convertTimestampToDate(product.getCreatedAt()));
-            productDTO.setCategories(categoryDTOs);
-            productDTO.setBrand(modelMapper.map(brandService.getByName(productDTO.getBrandName()), Brand.class));
+            Set<Category> categories = new HashSet<>(categoryService.getCategoriesByProduct(product));
+            List<String> categoryNames = categories.stream()
+                    .map(Category::getName)
+                    .toList();
+            productDTO.setCategoryNamesArray(categoryNames.toArray(new String[0]));
+            productDTO.setBrand(null);
+            productDTO.setCategories(null);
             return productDTO;
         } else {
             return null;
@@ -138,22 +131,38 @@ public class ProductServiceImplement implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getProductsByBrand(long brandId) {
-        List<Product> products = productRepository.findByBrandId(brandId);
+    public List<ProductDTO> getProductsByBrand(long[] brandIds) {
+        List<Product> products = productRepository.findAllByBrandIdIn(brandIds);
         List<ProductDTO> productDTOS = new ArrayList<>();
         for (Product product : products) {
             ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
             productDTO.setCreatedAtDate(Helper.convertTimestampToDate(product.getCreatedAt()));
             Set<Category> categories = new HashSet<>(categoryService.getCategoriesByProduct(product));
-            List<CategoryDTO> categoryDTOs = new ArrayList<>();
-            for (Category category : categories) {
-                CategoryDTO categoryDTO = modelMapper.map(category, CategoryDTO.class);
-                categoryDTO.setCreatedAtDate(Helper.convertTimestampToDate(category.getCreatedAt()));
-                categoryDTO.setProducts(null);
-                categoryDTOs.add(categoryDTO);
-            }
-            productDTO.setCategories(categoryDTOs);
+            List<String> categoryNames = categories.stream()
+                    .map(Category::getName)
+                    .toList();
+            productDTO.setCategoryNamesArray(categoryNames.toArray(new String[0]));
             productDTO.setBrand(null);
+            productDTO.setCategories(null);
+            productDTOS.add(productDTO);
+        }
+        return productDTOS;
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByCategory(long[] categoryIds) {
+        List<Product> products = productRepository.findByCategoriesIdIn(categoryIds);
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for (Product product : products) {
+            ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+            productDTO.setCreatedAtDate(Helper.convertTimestampToDate(product.getCreatedAt()));
+            Set<Category> categories = new HashSet<>(categoryService.getCategoriesByProduct(product));
+            List<String> categoryNames = categories.stream()
+                    .map(Category::getName)
+                    .toList();
+            productDTO.setCategoryNamesArray(categoryNames.toArray(new String[0]));
+            productDTO.setBrand(null);
+            productDTO.setCategories(null);
             productDTOS.add(productDTO);
         }
         return productDTOS;

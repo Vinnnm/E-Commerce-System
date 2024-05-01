@@ -64,8 +64,14 @@ public class ProductController {
     }
 
     @GetMapping ("/findByBrand")
-    public ResponseEntity<?> findByBrand(@RequestParam ("brandId") long brandId) {
-        List<ProductDTO> productDTOs = productService.getProductsByBrand(brandId);
+    public ResponseEntity<?> findByBrand(@RequestParam ("brandIds") long[] brandIds) {
+        List<ProductDTO> productDTOs = productService.getProductsByBrand(brandIds);
+        return ResponseEntity.status(HttpStatus.OK).body(Objects.requireNonNullElse(productDTOs, "No products found."));
+    }
+
+    @GetMapping ("/findByCategory")
+    public ResponseEntity<?> findByCategory(@RequestParam ("categoryIds") long[] categoryIds) {
+        List<ProductDTO> productDTOs = productService.getProductsByCategory(categoryIds);
         return ResponseEntity.status(HttpStatus.OK).body(Objects.requireNonNullElse(productDTOs, "No products found."));
     }
 }

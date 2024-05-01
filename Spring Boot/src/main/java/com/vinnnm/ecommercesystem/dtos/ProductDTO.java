@@ -16,4 +16,5 @@ public class ProductDTO {
     private Date createdAtDate;
     private List<CategoryDTO> categories;
     private Brand brand;
+    private String[] categoryNamesArray;
 }

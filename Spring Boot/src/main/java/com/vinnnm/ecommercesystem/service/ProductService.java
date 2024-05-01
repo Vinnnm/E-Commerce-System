@@ -13,6 +13,6 @@ public interface ProductService {
     ProductDTO getProductById(long id);
     boolean delete(long id);
     boolean buyProduct(long id, long quantity);
-
-    List<ProductDTO> getProductsByBrand(long brandId);
+    List<ProductDTO> getProductsByBrand(long[] brandIds);
+    List<ProductDTO> getProductsByCategory(long[] categoryIds);
 }
